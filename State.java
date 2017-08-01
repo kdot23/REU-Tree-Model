@@ -11,16 +11,22 @@ public class State {
 	private static int NUM_DEATHS;
 	private static int NUM_VINFECTIONS;
 	private static int NUM_HVINFECTIONS;
+	private static int NUM_SPORE;
+	//private static int NUM_VCHANGE;
 	
 	public void getNumbers(){
 		System.out.println("Births: " + NUM_BIRTHS);
 		System.out.println("Deaths: " + NUM_DEATHS);
 		System.out.println("V Infections: " + NUM_VINFECTIONS);
-		System.out.println("HV Infections: " + NUM_HVINFECTIONS);		
+		System.out.println("HV Infections: " + NUM_HVINFECTIONS);	
+		System.out.println("Sporulations: " + NUM_SPORE);
+		//System.out.println("HV Changes: " + NUM_HVCHANGE);
+		
 	}
 	
 	public void setNumbers(){
-		NUM_BIRTHS = NUM_DEATHS = NUM_VINFECTIONS = NUM_HVINFECTIONS = 0;
+		NUM_BIRTHS = NUM_DEATHS = NUM_VINFECTIONS = NUM_HVINFECTIONS = NUM_SPORE = 0;
+		// NUM_VCHANGE =
 	}
 	
 	public int[][] getVector(){
@@ -134,12 +140,96 @@ public class State {
 		the number of trees it could infect and the coefficients of the distance distribution,
 		and the location of the tree. It then infects the trees around it based on random generated 
 		numbers */
-		public void infect(int blightType, double SporeProb, double[] infectCoef, double[] distCoef, int x, int y,
+		public void infect(int treeType, int x, int y,Tree[][] p){
+			double SporeProb;
+			if (treeType == ProbSpec.V)
+				 SporeProb = ProbSpec.PROBOFSPOREVIRU;
+			else
+				 SporeProb = ProbSpec.PROBOFSPOREHYPO;
+			
+			if (Math.random() < SporeProb){
+				NUM_SPORE++;
+				int numHVInfections = 0;
+				int numInfections = (int) Math.round(Math.exp(ProbSpec.numInfCDF[0]*Math.random()- ProbSpec.numInfCDF[1]));
+				if (treeType == ProbSpec.HV){
+					for (int n=0; n<numInfections; n++){
+						if (Math.random() < ProbSpec.perHV2HV){
+							numHVInfections++;
+						}
+					}
+				}
+				else{
+					numHVInfections = 0;
+				}
+				
+				for(int v=0; v <= numInfections; v++){
+					double[] distCoef;
+					int blightType;
+				
+					if (v < numHVInfections){
+						distCoef = ProbSpec.HVDIST;
+						blightType = ProbSpec.HV;
+					}
+					else{
+						distCoef = ProbSpec.VDIST;
+						blightType = ProbSpec.V;
+					}
+					double randDistance = Math.random();
+					//Multiplied by 8 because a distance class is 8m 
+					double distance = Math.round(Math.exp(distCoef[0]*randDistance - distCoef[1])*ProbSpec.DISTCLASS);
+					//Divide by ProbSpec.SITESIZE because the plots are ProbSpec.SITESIZE meters
+					int d = (int) Math.floor(distance / ProbSpec.SITESIZE);
+
+					//Make and add locations to "possibleInfections"
+					ArrayList<Location> possibleInfections = new ArrayList<Location>();	 
+					for(int i = x-d; i <= x+d; i++){
+						if(Math.abs(i-x) ==  d){ //first or last row
+							for(int j = y-d; j <= y+d; j++){
+								try{
+									if(p[i][j].getRating() == ProbSpec.HEALTHY){			
+										possibleInfections.add(new Location(i,j));
+									}
+								}
+								catch(ArrayIndexOutOfBoundsException e){}
+							}
+						}
+						else{
+							try{
+								if(p[i][y-d].getRating() == ProbSpec.HEALTHY){
+									possibleInfections.add(new Location(i,y-d));
+								}
+								if(p[i][y+d].getRating() == ProbSpec.HEALTHY){
+									possibleInfections.add(new Location(i,y+d));
+								}
+							}
+							catch(ArrayIndexOutOfBoundsException e){}
+						}
+					}
+
+					if(possibleInfections.size() != 0){
+						int luckyIndex = (int) Math.floor(Math.random()*possibleInfections.size());
+						int a = (possibleInfections.get(luckyIndex)).getx();
+						int b = (possibleInfections.get(luckyIndex)).gety();
+						p[a][b].setRating(blightType);	
+						
+						if (blightType == ProbSpec.V)
+							NUM_VINFECTIONS++;
+						else
+							NUM_HVINFECTIONS++;	
+				
+					}
+				}
+			}
+		}
+		
+		/*public void infect(int blightType, double SporeProb, double[] infectCoef, double[] distCoef, int x, int y,
 							Tree[][] p){
 			double randSpore = Math.random();
 			if(randSpore < SporeProb){ 
+				NUM_SPORE++;
 				double randInfections = Math.random();
 				int numInfections = (int) Math.round(Math.exp(infectCoef[0]*randInfections - infectCoef[1]));
+				//System.out.println("Sporing occured! type: " + blightType + "num infections: " + numInfections);
 				for(int v=0; v <= numInfections; v++){
 					double randDistance = Math.random();
 					//Multiplied by 8 because a distance class is 8m 
@@ -173,12 +263,11 @@ public class State {
 						}
 					}
 
-					while(possibleInfections.size() != 0){
+					if(possibleInfections.size() != 0){
 						int luckyIndex = (int) Math.floor(Math.random()*possibleInfections.size());
 						int a = (possibleInfections.get(luckyIndex)).getx();
 						int b = (possibleInfections.get(luckyIndex)).gety();
 						p[a][b].setRating(blightType);
-						possibleInfections.remove(luckyIndex);
 						
 						if (blightType == ProbSpec.V)
 							NUM_VINFECTIONS++;
@@ -187,7 +276,7 @@ public class State {
 					}
 				}
 			} 
-		}
+		} */
 		
 		
 		public Tree[][] getNextYear(){
@@ -232,10 +321,11 @@ public class State {
 						if (nextYear[a][b].getRating() == ProbSpec.V || nextYear[a][b].getRating() == ProbSpec.HV) {
 						double randRating = Math.random();
 					
-						int rowNum2 = (nextYear[a][b].getTreatment())*(ProbSpec.HEALTHY-1)
-										+ (nextYear[a][b].getRating()-1);
+						int rowNum2 = (nextYear[a][b].getTreatment()*(ProbSpec.HEALTHY-1)
+										+ nextYear[a][b].getRating() -1);
+						
 						for(int j=0; j<(ProbSpec.HEALTHY-1); j++){
-							if(randRating < ProbSpec.newStageCDF[rowNum2][j]){
+							if(randRating < ProbSpec.newRatingCDF[rowNum2][j]){
 								nextYear[a][b].setRating(j+1); //add 1 because the table does not include dead ratings
 								break;
 							}
@@ -243,12 +333,11 @@ public class State {
 						}
 					
 				
-					//Spread of fungus, possibly infecting new trees with hypovirulent/virulent blight
+					//Spread of fungus, possibly infecting healthy trees with hypovirulent/virulent blight
 					if (nextYear[a][b].getRating() == ProbSpec.V)
-						infect(ProbSpec.V, ProbSpec.PROBOFSPOREVIRU, ProbSpec.V2V, ProbSpec.VDIST, a, b, nextYear);
+						infect(ProbSpec.V, a, b, nextYear);
 					if (nextYear[a][b].getRating() == ProbSpec.HV){
-						infect(ProbSpec.V, ProbSpec.PROBOFSPOREHYPO, ProbSpec.HV2V, ProbSpec.VDIST, a, b, nextYear);
-						infect(ProbSpec.HV, ProbSpec.PROBOFSPOREHYPO, ProbSpec.HV2HV, ProbSpec.HVDIST, a, b, nextYear);
+						infect(ProbSpec.HV, a, b, nextYear);
 					}
 				
 					//Reproduction of trees into Stage 1 trees

@@ -33,9 +33,15 @@ public class ProbSpec {
 	public static final double PROBOFSPOREVIRU = 1- Math.exp(-1.5);
 	public static final double PROBOFSPOREHYPO = 1- Math.exp(-.75);
 
-	public static final double[] V2V = {2.065, 0.3438};
-	public static final double[] HV2V = {5.817, 3.998};
-	public static final double[] HV2HV = {2.0317, 0.4236};
+	//public static final double[] V2V = {2.065, 0.345};
+	//public static final double[] HV2V = {5.817, 3.998};
+	//public static final double[] HV2HV = {2.032, 0.424};
+	
+	//equation is y= 0.1782ln(x) + 0.6476
+	public static final double[] numInfCDF = {5.6117, 3.6341};
+	
+	//percentage of infections from hypovirulent trees that are hypovirulent
+	public static final double perHV2HV = 0.65;
 
 	public static final double[] VDIST = {4.695, 1.777};
 	public static final double[] HVDIST = {7.153, 4.049};
@@ -45,27 +51,27 @@ public class ProbSpec {
 													{0, 0.016, 0.78, 2.43},
 													{0, 0.001, 0.03, 7.74}};
 	
-	public static double[][] newRatingCDF = {{0.69714286,	1},
-												{0.20588235,	1},
-												{0.52651515,	1},
-												{0.09884467,	1}};
+	public static double[][] newRatingCDF = {{0.69714286, 1},
+												{0.20588235, 1},
+												{0.52651515, 1},
+												{0.09884467, 1}};
 	
 	//each array is p(death), p(s0) in n+1,...p(s4) in n+1. Arrays are clustered 4 in a row correspond to V,HV & H
 	public static double[][] newStageCDF =  {{0.066, 0.962, 0.999, 0.999, 1}, 
 												{0.006, 0.09, 0.99, 1, 1},
-												{0.05, 0.05,0.3,	0.96,1},
+												{0.05, 0.05, 0.3, 0.96, 1},
 												{0.021, 0.021, 0.101, 0.111, 1},
-												{0.159,	0.996,	1,	1,	1},
-												{0,	0.09,	0.98,	1,	1},
-												{0.01,	0.01,	0.05,	0.96,	1},
-												{0.001,	0.001,	0.006,	0.056,	1},
-												{0.167,	0.994,	1,	1,	1},
-												{0,	0.07,	0.99,	1,	1},
-												{0,	0,	0,	0.95,	1},
-												{0.013,	0.013,	0.013,	0.013,	1}};
+												{0.159,	0.996, 1, 1, 1},
+												{0,	0.09, 0.98,	1, 1},
+												{0.01, 0.01, 0.05, 0.96, 1},
+												{0.001,	0.001, 0.006, 0.056, 1},
+												{0.167,	0.994, 1, 1, 1},
+												{0,	0.07, 0.99,	1, 1},
+												{0,	0, 0, 0.95,	1},
+												{0.013,	0.013, 0.013, 0.013, 1}};
 	
 	//Population dynamics of West Salem in 2002.
-	//arrays are virulent, hypovirulent and healthy. Eeach entry corresponds to stage
+	//rows are virulent, hypovirulent and healthy. Each entry corresponds to stage
 	public static double[] pop2002cdf = {0.03311258, 0.09050773, 0.15011038, 0.23399558,
 										0.23399558, 0.27373068, 0.31567329, 0.43929360,
 										0.51214128, 0.84326711, 0.94481236, 1.00000000};
