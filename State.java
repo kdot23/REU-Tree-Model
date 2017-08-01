@@ -23,6 +23,30 @@ public class State {
 		NUM_BIRTHS = NUM_DEATHS = NUM_VINFECTIONS = NUM_HVINFECTIONS = 0;
 	}
 	
+	public int[][] getVector(){
+		int vec[][] = new int[ProbSpec.HEALTHY][ProbSpec.DBHSTAGE4];
+		for (int i=0; i < height; i++){
+			for (int j=0; j < width; j++)
+				if (plot[i][j].getRating() != 0){
+					vec[plot[i][j].getRating()-1][plot[i][j].getStage()-1] += 1;
+				}
+		}
+		String st = "";
+		for (int i=0; i < ProbSpec.HEALTHY; i ++){		
+			String s = "[";
+			for (int j=0; j < ProbSpec.DBHSTAGE4; j++){
+				if (j == ProbSpec.DBHSTAGE4-1)
+					s = s + vec[i][j] + "]";
+				else
+					s = s + vec[i][j] + ", ";
+			
+			}	
+			st = st + s;
+		}
+		System.out.println(st);
+		return vec;
+	}
+	
 	//location class
 		private class Location {
 			int x, y;
