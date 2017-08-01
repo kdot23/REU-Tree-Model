@@ -6,6 +6,8 @@ public class Tree {
 	
 	public Tree(){
 		rating = ProbSpec.DEAD;
+		stage = ProbSpec.DEAD;
+		treatment = ProbSpec.UNTREATED;
 	}
 	
 	public Tree(int stage, int rating, int treatment){ 

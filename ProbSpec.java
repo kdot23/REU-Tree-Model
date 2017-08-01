@@ -3,10 +3,14 @@ import java.io.*;
 import java.util.*;
 
 public class ProbSpec {
+	
+	public static final int YEARS = 10; //number of years to simulate for
+	
 	public static final int SITESIZE = 2; //sites are 2x2 meter squares
 	public static final int DISTCLASS = 8; //distance class sizes are 8 meters
 	
 	public static final double TREEDENSITY = 0.0107*SITESIZE*SITESIZE;
+	
 	
 	public static final int UNTREATED = 0;
 	public static final int TREATED = 1;
@@ -45,9 +49,10 @@ public class ProbSpec {
 													{0, 0.001, 0.03, 7.74}};
 	
 	public static double[][] newRatingCDF = new double[(TREATED+1)*(HEALTHY-1)][(HEALTHY-1)];
-	public static double[][] newStageCDF = new double[(HEALTHY)*(DBHSTAGE4+1)][DBHSTAGE4+1];
-		
+	public static double[][] newStageCDF = new double[(HEALTHY)*(DBHSTAGE4)][DBHSTAGE4+1];
+	
 	public ProbSpec(){
+	
 		String fileNameDefined = "newRatingCDF.csv";
         File file1 = new File(fileNameDefined);
                
@@ -73,22 +78,22 @@ public class ProbSpec {
         fileNameDefined = "newStageCDF.csv";
         File file2 = new File(fileNameDefined);
             
-        for(int i=0; i<HEALTHY; i++){
+        /*for(int i=0; i<HEALTHY; i++){
         	//a dead tree stays dead
         	newStageCDF[i*(DBHSTAGE4+1)+DEAD][DEAD] = 1;
         	newStageCDF[i*(DBHSTAGE4+1)+DEAD][DBHSTAGE1] = 1;
         	newStageCDF[i*(DBHSTAGE4+1)+DEAD][DBHSTAGE2] = 1;
         	newStageCDF[i*(DBHSTAGE4+1)+DEAD][DBHSTAGE3] = 1;
         	newStageCDF[i*(DBHSTAGE4+1)+DEAD][DBHSTAGE4] = 1;
-        }
+        } */
         
         try{
             Scanner inputStream = new Scanner(file2);
             while(inputStream.hasNextDouble()){
                 for(int i=0; i<HEALTHY; i++){
-                	for(int j=1; j<DBHSTAGE4+1; j++){
+                	for(int j=0; j<DBHSTAGE4; j++){
                 		for(int k=0; k<DBHSTAGE4+1; k++){
-                			newStageCDF[i*(DBHSTAGE4+1)+j][k] = inputStream.nextDouble();
+                			newStageCDF[i*(DBHSTAGE4)+j][k] = inputStream.nextDouble();
                 		}
                 	}
                 }
@@ -99,6 +104,7 @@ public class ProbSpec {
         }catch (FileNotFoundException e){
             e.printStackTrace();
         }       
-	}//close constructor
+	//close constructor
 
+}
 }

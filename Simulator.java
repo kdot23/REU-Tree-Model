@@ -2,18 +2,12 @@
 public class Simulator {
 
 	public static void main(String[] args) {
+		System.out.println(x);ProbSpec.newStageCDF[rowNum][j]
+		
 		/*
-		Tree tree1 = new Tree(ProbSpec.DBHSTAGE2,ProbSpec.HEALTHY,ProbSpec.UNTREATED);
-		Tree tree2 = new Tree(ProbSpec.DBHSTAGE1,ProbSpec.V, ProbSpec.UNTREATED);
-		Tree tree3 = new Tree(ProbSpec.DBHSTAGE3,ProbSpec.HEALTHY, ProbSpec.TREATED);
-		
-		Tree[][] treeList = {{tree1, new Tree(), new Tree()}, {new Tree(), new Tree(), tree2},
-				{new Tree(), tree3, new Tree()}}; */
-		
-		
 		Tree[][] treeList = new Tree[ProbSpec.HEIGHT][ProbSpec.WIDTH];
 		
-		State s = new State(treeList, ProbSpec.HEIGHT);
+		State s = new State(treeList);
 		
 		
 		for (int i=0; i < ProbSpec.HEIGHT; i++)
@@ -37,14 +31,14 @@ public class Simulator {
 			}
 		}
 		
-		for (int i=0; i <100; i++)
+		s.setNumbers();
+		
+		for (int i=0; i < ProbSpec.YEARS; i++)
 		{			
 			Tree[][] list = s.getNextYear();
-			s = new State(list,50);
+			s = new State(list);
 		}
 		
-		s.printPlot(); 	
-
+		s.getNumbers(); 	*/
 	}
-
 }

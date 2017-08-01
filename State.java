@@ -2,6 +2,27 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class State {
+	private int height = ProbSpec.HEIGHT;
+	private int width = ProbSpec.WIDTH;
+	
+	private Tree[][] plot = new Tree[height][width];
+	
+	private static int NUM_BIRTHS;
+	private static int NUM_DEATHS;
+	private static int NUM_VINFECTIONS;
+	private static int NUM_HVINFECTIONS;
+	
+	public void getNumbers(){
+		System.out.println("Births: " + NUM_BIRTHS);
+		System.out.println("Deaths: " + NUM_DEATHS);
+		System.out.println("V Infections: " + NUM_VINFECTIONS);
+		System.out.println("HV Infections: " + NUM_HVINFECTIONS);		
+	}
+	
+	public void setNumbers(){
+		NUM_BIRTHS = NUM_DEATHS = NUM_VINFECTIONS = NUM_HVINFECTIONS = 0;
+	}
+	
 	//location class
 		private class Location {
 			int x, y;
@@ -17,47 +38,30 @@ public class State {
 			}
 		}
 
-		private int height = ProbSpec.HEIGHT;
-		private int width = ProbSpec.WIDTH;
+
 		
-		private Tree[][] plot = new Tree[height][width];
-		/*private int totalValue = -1; */
-		
-		public State(Tree[][] plot, int dimension)
+		public State(Tree[][] plot)
 		{
 			this.plot = plot;
-			height = dimension;
-			width = dimension;
+		}
+		
+		public Tree[][] getPlot(){
+			return plot;
 		}
 		
 		public int getHeight(){
 			return height;
-		}//end getHeight
+		}
 		
 		public int getWidth(){
 			return width;
-		}//end getWidth
+		}
 		
 		public void setTree(Tree t, int r, int c){
 			plot[r][c] = t;
 		}
 		
-		/*public int getValue(){ //returns the total value of the plot
-			if(totalValue < 0){
-				int sum = 0;
-				for(int i=0; i<height; i++){
-					for(int j=0; j<width; j++){
-						sum += plot[i][j].getRating();
-					}
-				}
-				totalValue = sum;
-			}
-			return totalValue;
-		}//end getValue */
-		
-		public Tree[][] getPlot(){
-			return plot;
-		}
+
 		
 		public boolean equals(Object o){
 			if(!(o instanceof State)){
@@ -77,6 +81,7 @@ public class State {
 			return true;
 		}
 		
+		
 		public int hashCode(){
 			int code = 0;
 			for (int row=0; row<plot.length; row++){
@@ -87,6 +92,7 @@ public class State {
 			}
 			return code;
 		}
+		
 		
 		public static void shuffle(ArrayList<Location> a) {
 	        int n = a.size();
@@ -117,15 +123,13 @@ public class State {
 					//Divide by ProbSpec.SITESIZE because the plots are ProbSpec.SITESIZE meters
 					int d = (int) Math.floor(distance / ProbSpec.SITESIZE);
 
-					ArrayList<Location> possibleInfections = new ArrayList<Location>();
-	 
+					//Make and add locations to "possibleInfections"
+					ArrayList<Location> possibleInfections = new ArrayList<Location>();	 
 					for(int i = x-d; i <= x+d; i++){
 						if(Math.abs(i-x) ==  d){ //first or last row
 							for(int j = y-d; j <= y+d; j++){
 								try{
-									if(p[i][j].getRating() == ProbSpec.HEALTHY || 
-										(blightType == ProbSpec.HV && p[i][j].getRating() == ProbSpec.V)){
-										
+									if(p[i][j].getRating() == ProbSpec.HEALTHY){			
 										possibleInfections.add(new Location(i,j));
 									}
 								}
@@ -134,12 +138,10 @@ public class State {
 						}
 						else{
 							try{
-								if(p[i][y-d].getRating() == ProbSpec.HEALTHY || 
-										(blightType == ProbSpec.HV && p[i][y-d].getRating() == ProbSpec.V)){
+								if(p[i][y-d].getRating() == ProbSpec.HEALTHY){
 									possibleInfections.add(new Location(i,y-d));
 								}
-								if(p[i][y+d].getRating() == ProbSpec.HEALTHY || 
-										(blightType == ProbSpec.HV && p[i][y+d].getRating() == ProbSpec.V)){
+								if(p[i][y+d].getRating() == ProbSpec.HEALTHY){
 									possibleInfections.add(new Location(i,y+d));
 								}
 							}
@@ -147,11 +149,17 @@ public class State {
 						}
 					}
 
-					if(possibleInfections.size() != 0){
+					while(possibleInfections.size() != 0){
 						int luckyIndex = (int) Math.floor(Math.random()*possibleInfections.size());
 						int a = (possibleInfections.get(luckyIndex)).getx();
 						int b = (possibleInfections.get(luckyIndex)).gety();
 						p[a][b].setRating(blightType);
+						possibleInfections.remove(luckyIndex);
+						
+						if (blightType == ProbSpec.V)
+							NUM_VINFECTIONS++;
+						else
+							NUM_HVINFECTIONS++;					
 					}
 				}
 			} 
@@ -170,47 +178,48 @@ public class State {
 				}
 			}
 			shuffle(list);
-			
-			
+						
 			//iterate over the random ordering, generating the year's events
 			for(int i=0; i<list.size(); i++){
 				int a,b;
 				a = (list.get(i)).getx();
 				b = (list.get(i)).gety();
 				
-				if(nextYear[a][b].getStage()!=ProbSpec.DEAD){
+				if(nextYear[a][b].getStage() != ProbSpec.DEAD){
 					//Set new stage, simulating growth
 					double randStage = Math.random();
 				
 					int rowNum = (nextYear[a][b].getRating()-1)*(ProbSpec.DBHSTAGE4 +1) 
 									+ nextYear[a][b].getStage();
-					
+					System.out.println(rowNum);
 					for(int j=0; j<(ProbSpec.DBHSTAGE4+1); j++){
+						System.out.println(ProbSpec.newStageCDF[rowNum][j]);
 						if(randStage < ProbSpec.newStageCDF[rowNum][j]){
 							nextYear[a][b].setStage(j);
 							break;
 						}
 					}
-					
-				
-				
+									
 					//Set new rating, simulating changes in tree health
-					if(nextYear[a][b].getStage()==ProbSpec.DEAD){//if tree is dead, set rating and treatment to 0 also
+					if(nextYear[a][b].getStage() == ProbSpec.DEAD){//if tree is dead, set rating and treatment to 0 also
 						nextYear[a][b].setRating(ProbSpec.DEAD);
 						nextYear[a][b].setTreatment(ProbSpec.UNTREATED);
+						NUM_DEATHS++;
 					}
 					else{
+						if (nextYear[a][b].getRating() == ProbSpec.V || nextYear[a][b].getRating() == ProbSpec.HV) {
 						double randRating = Math.random();
 					
-						int rowNum2 = (nextYear[a][b].getTreatment())*(ProbSpec.HEALTHY -1)
+						int rowNum2 = (nextYear[a][b].getTreatment())*(ProbSpec.HEALTHY-1)
 										+ (nextYear[a][b].getRating()-1);
 						for(int j=0; j<(ProbSpec.HEALTHY-1); j++){
 							if(randRating < ProbSpec.newStageCDF[rowNum2][j]){
-								nextYear[a][b].setRating(j+1);
+								nextYear[a][b].setRating(j+1); //add 1 because the table does not include dead ratings
 								break;
 							}
 						}
-					}
+						}
+					
 				
 					//Spread of fungus, possibly infecting new trees with hypovirulent/virulent blight
 					if (nextYear[a][b].getRating() == ProbSpec.V)
@@ -245,10 +254,12 @@ public class State {
 							nextYear[c][d].setStage(ProbSpec.DBHSTAGE1); //Creates a healthy, stage 1 seedling
 							nextYear[c][d].setRating(ProbSpec.HEALTHY); 
 							k--;
+							NUM_BIRTHS++;
 						}
 						possibleSites.remove(0);
 					}
 				}
+			}
 			}
 			return nextYear;
 		}
