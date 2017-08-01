@@ -189,11 +189,9 @@ public class State {
 					//Set new stage, simulating growth
 					double randStage = Math.random();
 				
-					int rowNum = (nextYear[a][b].getRating()-1)*(ProbSpec.DBHSTAGE4 +1) 
-									+ nextYear[a][b].getStage();
-					System.out.println(rowNum);
+					int rowNum = (nextYear[a][b].getRating()-1)*(ProbSpec.DBHSTAGE4) 
+									+ nextYear[a][b].getStage()-1;
 					for(int j=0; j<(ProbSpec.DBHSTAGE4+1); j++){
-						System.out.println(ProbSpec.newStageCDF[rowNum][j]);
 						if(randStage < ProbSpec.newStageCDF[rowNum][j]){
 							nextYear[a][b].setStage(j);
 							break;

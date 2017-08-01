@@ -2,9 +2,7 @@
 public class Simulator {
 
 	public static void main(String[] args) {
-		System.out.println(x);ProbSpec.newStageCDF[rowNum][j]
-		
-		/*
+
 		Tree[][] treeList = new Tree[ProbSpec.HEIGHT][ProbSpec.WIDTH];
 		
 		State s = new State(treeList);
@@ -32,6 +30,7 @@ public class Simulator {
 		}
 		
 		s.setNumbers();
+		s.getNumbers();
 		
 		for (int i=0; i < ProbSpec.YEARS; i++)
 		{			
@@ -39,6 +38,7 @@ public class Simulator {
 			s = new State(list);
 		}
 		
-		s.getNumbers(); 	*/
+		s.getNumbers(); 
+		s.printPlot();
 	}
 }
