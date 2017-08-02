@@ -1,19 +1,17 @@
-
 public class Tree {
 	private int rating;
 	private int treatment; //0=no treatment, 1=treatment
 	private int stage;
 	
-	public Tree(){
-		rating = ProbSpec.DEAD;
-		stage = ProbSpec.DEAD;
-		treatment = ProbSpec.UNTREATED;
+	public Tree(){ //default constructor
+		 rating = ProbSpec.DEAD;
+		 stage = ProbSpec.DEAD;
+		 treatment = ProbSpec.UNTREATED;
 	}
-	
-	public Tree(int stage, int rating, int treatment){ 
-		this.rating = rating;
-		this.stage = stage;
-		this.treatment = treatment;
+	public Tree(int stage_, int rating_, int treatment_){
+		rating = rating_;
+		stage = stage_;
+		treatment = treatment_;
 	}
 		
 	public void setRating(int r){
@@ -57,30 +55,27 @@ public class Tree {
 		String s;
 		String t;
 		String r;
-		
-		if (rating == ProbSpec.DEAD)
-		{
+
+		if (rating == ProbSpec.DEAD){
 			s = "    ";
 		}
-		else
-		{
-			
-		if (treatment == ProbSpec.UNTREATED)
-			t = "U";
-		else
-			t = "T";
-		
-		if (rating == ProbSpec.HEALTHY)
-			r = " H";
-		else {
-			if (rating == ProbSpec.HV)
-				r = "HV";
+		else{
+
+			if (treatment == ProbSpec.UNTREATED)
+				t = "U";
 			else
-				r = " V";
-		}
-		s =  r + stage + t;
-		}
+				t = "T";
+
+			if (rating == ProbSpec.HEALTHY)
+				r = " H";
+			else {
+				if (rating == ProbSpec.HV)
+					r = "HV";
+				else
+					r = " V";
+			}	
+			s =  r + stage + t;
+			}
 		return (s);
 	}
-
 }
