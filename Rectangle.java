@@ -1,5 +1,3 @@
-package fungus;
-
 /**
  * Author: David Riley & M. Allen
  *

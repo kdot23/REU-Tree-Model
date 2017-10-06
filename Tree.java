@@ -1,4 +1,3 @@
-package simulation;
 public class Tree {
 	private int rating;
 	private int treatment; //0=no treatment, 1=treatment

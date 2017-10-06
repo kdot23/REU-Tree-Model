@@ -1,8 +1,5 @@
-//import java.io.*;
-//import java.util.*;
-
-package simulation;
-public final class ProbSpec {
+public final class ProbSpec 
+{
 
 	public static final int YEARS = 100;
 	
@@ -85,59 +82,4 @@ public final class ProbSpec {
 												{0,	0.07,	0.99,	1,	1},
 												{0,	0,	0,	0.95,	1},
 												{0.013,	0.013,	0.013,	0.013,	1}};
-		
-	/*public ProbSpec(){
-		String fileNameDefined = "newRatingCDF.csv";
-        File file1 = new File(fileNameDefined);
-               
-        try{
-            Scanner inputStream = new Scanner(file1);
-            // hashNext() loops line-by-line
-            while(inputStream.hasNextDouble()){
-                for(int i=0; i<TREATED+1; i++){
-                	for(int j=0; j<(HEALTHY-1); j++){
-                		for(int k=0; k<(HEALTHY-1); k++){
-                			newRatingCDF[i*(HEALTHY-1)+j][k] = inputStream.nextDouble();
-                   		}
-                	}
-                }
-            }
-            // after loop, close scanner
-            inputStream.close();
-
-        }catch (FileNotFoundException e){
-            e.printStackTrace();
-        }
-		
-        fileNameDefined = "newStageCDF.csv";
-        File file2 = new File(fileNameDefined);
-            
-        for(int i=0; i<HEALTHY; i++){
-        	//a dead tree stays dead
-        	newStageCDF[i*(DBHSTAGE4+1)+DEAD][DEAD] = 1;
-        	newStageCDF[i*(DBHSTAGE4+1)+DEAD][DBHSTAGE1] = 1;
-        	newStageCDF[i*(DBHSTAGE4+1)+DEAD][DBHSTAGE2] = 1;
-        	newStageCDF[i*(DBHSTAGE4+1)+DEAD][DBHSTAGE3] = 1;
-        	newStageCDF[i*(DBHSTAGE4+1)+DEAD][DBHSTAGE4] = 1;
-        }
-        
-        try{
-            Scanner inputStream = new Scanner(file2);
-            while(inputStream.hasNextDouble()){
-                for(int i=0; i<HEALTHY; i++){
-                	for(int j=1; j<DBHSTAGE4+1; j++){
-                		for(int k=0; k<DBHSTAGE4+1; k++){
-                			newStageCDF[i*(DBHSTAGE4+1)+j][k] = inputStream.nextDouble();
-                		}
-                	}
-                }
-            }
-            // after loop, close scanner
-            inputStream.close();
-
-        }catch (FileNotFoundException e){
-            e.printStackTrace();
-        }       
-	}//close constructor
-	*/
 }
